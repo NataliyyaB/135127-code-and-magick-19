@@ -5,28 +5,27 @@ var SURNAMES = ['да Марья', 'Верон', 'Мирабелла', 'Валь
 var EYES = ['black', 'red', 'blue', 'yellow', 'green'];
 var COATS = ['rgb(101, 137, 164)', 'rgb(241, 43, 107)', 'rgb(146, 100, 161)', 'rgb(56, 159, 117)', 'rgb(215, 210, 55)', 'rgb(0, 0, 0)'];
 
-var getRandomArray = function (adArray) {
-  var randomArray = Math.floor(Math.random() * adArray.length);
-  return randomArray;
+var userDialog = document.querySelector('.setup');
+var similarListElement = userDialog.querySelector('.setup-similar-list');
+
+
+var getRandomArrayItem = function (predefinedArray) {
+  var randomItem = Math.floor(Math.random() * predefinedArray.length);
+  return predefinedArray[randomItem];
 };
 
-var userDialog = document.querySelector('.setup');
-userDialog.classList.remove('hidden');
+var showSetupWindow = function () {
+  userDialog.classList.remove('hidden');
+};
 
-var similarListElement = userDialog.querySelector('.setup-similar-list');
-var similarWizardTemplate = document.querySelector('#similar-wizard-template')
-  .content
-  .querySelector('.setup-similar-item');
-
-
-var wizards = [];
-var getWizard = function () {
+var getWizards = function () {
+  var wizards = [];
 
   for (var i = 0; i < 4; i++) {
     var wizard = {
-      name: NAMES[getRandomArray(NAMES)] + ' ' + SURNAMES[getRandomArray(SURNAMES)],
-      coatColor: COATS[getRandomArray(COATS)],
-      eyesColor: EYES[getRandomArray(EYES)]
+      name: getRandomArrayItem(NAMES) + ' ' + getRandomArrayItem(SURNAMES),
+      coatColor: getRandomArrayItem(COATS),
+      eyesColor: getRandomArrayItem(EYES)
     };
 
     wizards.push(wizard);
@@ -34,10 +33,11 @@ var getWizard = function () {
 
   return wizards;
 };
-getWizard();
-
 
 var renderWizard = function (wizard) {
+  var similarWizardTemplate = document.querySelector('#similar-wizard-template')
+  .content
+  .querySelector('.setup-similar-item');
   var wizardElement = similarWizardTemplate.cloneNode(true);
 
   wizardElement.querySelector('.setup-similar-label').textContent = wizard.name;
@@ -46,10 +46,23 @@ var renderWizard = function (wizard) {
   return wizardElement;
 };
 
-var fragment = document.createDocumentFragment();
-for (var i = 0; i < wizards.length; i++) {
-  fragment.appendChild(renderWizard(wizards[i]));
-}
-similarListElement.appendChild(fragment);
+var addElementsToDom = function (elements) {
+  var fragment = document.createDocumentFragment();
+  for (var i = 0; i < elements.length; i++) {
+    fragment.appendChild(renderWizard(elements[i]));
+  }
+  similarListElement.appendChild(fragment);
+};
 
-userDialog.querySelector('.setup-similar').classList.remove('hidden');
+var showSetupSimilar = function () {
+  userDialog.querySelector('.setup-similar').classList.remove('hidden');
+};
+
+
+showSetupWindow();
+
+var wizards = getWizards();
+
+addElementsToDom(wizards);
+
+showSetupSimilar();
